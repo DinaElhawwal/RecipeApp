@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Domainlayer.Model;
 using Microsoft.AspNetCore.Mvc;
+using ServiceLayer.service.contract;
 
 namespace WebApplication3.Controllers
 {
@@ -7,78 +8,59 @@ namespace WebApplication3.Controllers
     [ApiController]
     public class RecipesController : ControllerBase
     {
-        private readonly DataContext _context;
-        private object recipe;
+        private readonly Interface1 _interface;
 
-      //  public object?[]? Name { get; private set; }
-
-        public RecipesController(DataContext context)
+        public RecipesController(Interface1 interface1)
         {
-            _context = context;
+          _interface= interface1;
+            
         }
+
 
 
         [HttpGet]
-        public async Task<ActionResult<List<Recipes>>> Get()
+
+        public async Task<ActionResult<List<Recipes>>> GetAll()
         {
-            return Ok(await _context.Allrecipes.ToListAsync());
+            return Ok(await _interface.Get());
         }
 
-        [HttpGet("{Name}")]
-        
-        public async Task<ActionResult<Recipes>> Get(string Name)
+        [HttpGet("{search}")]
+        public async Task<ActionResult<IEnumerable<Recipes>>> Search(string Name)
         {
-            var recipe = await _context.Allrecipes.FindAsync(Name);
-            if (recipe != null)
-                return Ok(recipe);
-            return BadRequest("Hero not found.");
+            return Ok(await _interface.search(Name));
+
         }
-
-
-        //  public List <Recipes> Search  (string Name)
-        //.Where(a => a.Name == Name).ToList();
-        
 
         [HttpPost]
-        public async Task<ActionResult<List<Recipes>>> AddHero(Recipes recipe)
-        {
-            _context.Allrecipes.Add(recipe);
-            await _context.SaveChangesAsync();
 
-            return Ok(await _context.Allrecipes.ToListAsync());
+        public async Task<ActionResult<List<Recipes>>> AddRecipe(Recipes recipe)
+        {
+            return Ok(await _interface.Add(recipe));
         }
 
         [HttpPut]
-        public async Task<ActionResult<List<Recipes>>> UpdateHero(Recipes request)
+        public async Task<ActionResult<List<Recipes>>> Update(Recipes request)
         {
-            var dbrecipe = await _context.Allrecipes.FindAsync(request.Name);
-            if (dbrecipe == null)
-                return BadRequest("Hero not found.");
-
-            dbrecipe.Name = request.Name;
-            dbrecipe.Ingredients = request.Ingredients;
-            dbrecipe.Steps = request.Steps;
-            dbrecipe.Category = request.Category;
-
-
-            await _context.SaveChangesAsync();
-
-            return Ok(await _context.Allrecipes.ToListAsync());
+            return Ok(await _interface.Update(request));
         }
-        [HttpDelete("{Name}")]
-        public async Task<ActionResult<List<Recipes>>> Delete(string Name)
+
+        [HttpDelete]
+        public async Task<ActionResult<List<Recipes>>> delete(int id)
         {
-            var dbrecipe = await _context.Allrecipes.FindAsync(Name);
-            if (dbrecipe == null)
-                return BadRequest("Hero not found.");
-
-            _context.Allrecipes.Remove(dbrecipe);
-            await _context.SaveChangesAsync();
-
-            return Ok(await _context.Allrecipes.ToListAsync());
+            return Ok(await _interface.Delete(id));
         }
+
+
+
+
+
+
+
 
 
 
     }
 }
+
+       
