@@ -19,6 +19,8 @@ namespace RepositoryLayer
         public Applicationdbcontext(DbContextOptions options) : base(options)
         {
         }
+        public DbSet<Recipes> Recipes { get; set; }
+        public DbSet<Ingredients> Ingredientss { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

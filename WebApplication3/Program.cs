@@ -11,19 +11,20 @@ using ServiceLayer.service.implentation;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<Interface1,RecipeService>();
+builder.Services.AddScoped<IRecipeservice, RecipeService>();
 builder.Services.AddControllers();
 var configuration = builder.Configuration;
-builder.Services.AddDbContext<DataContext>(options =>
-{
-   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+//builder.Services.AddDbContext<Applicationdbcontext>(options =>
+//{
+ //  options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+//});
 //var configuration = builder.Configuration;
 builder.Services.AddDbContext<Applicationdbcontext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddTransient<IRecipeservice, RecipeService>();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<Applicationdbcontext>()
 

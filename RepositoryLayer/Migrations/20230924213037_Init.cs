@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace RepositoryLayer.Migrations
 {
-    public partial class Cii : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -46,6 +46,21 @@ namespace RepositoryLayer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Recipes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    recipe_name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Steps = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Category = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Recipes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -154,15 +169,35 @@ namespace RepositoryLayer.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "96729043-4c1b-4cff-b21a-ee3995648b96", "1", "Admin", "Admin" });
+            migrationBuilder.CreateTable(
+                name: "Ingredientss",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Recipe_ID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Ingredientss", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Ingredientss_Recipes_Recipe_ID",
+                        column: x => x.Recipe_ID,
+                        principalTable: "Recipes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "d9e87ee0-53b3-4be4-863b-9bc59e9f281d", "2", "User", "User" });
+                values: new object[] { "9fce7395-b4b2-4322-aa33-6cb432ca32fb", "2", "User", "User" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "fc71ca2a-5000-49b2-8b6d-bc491c643cf9", "1", "Admin", "Admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -202,6 +237,11 @@ namespace RepositoryLayer.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Ingredientss_Recipe_ID",
+                table: "Ingredientss",
+                column: "Recipe_ID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -222,10 +262,16 @@ namespace RepositoryLayer.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Ingredientss");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Recipes");
         }
     }
 }

@@ -10,15 +10,15 @@ namespace Domainlayer.Model
 {
     
    
-        public class Recipes 
+        public class Recipes :BaseEntity
 
 
         {
 
-            [Key]
-            public int Id { get; set; }
-            public string Name { get; set; }
-            public List<Ingredients> Ingredients { get; set; }
+            
+         
+            public string? recipe_name { get; set; }
+            public virtual List<Ingredients> Ingredients { get; set; }
             public string Steps { get; set; } = string.Empty;
             public string Category { get; set; } = string.Empty;
 

@@ -13,82 +13,56 @@ using System.Threading.Tasks;
 
 namespace ServiceLayer.service.implentation
 {
-    public class RecipeService : Interface1
+
+    public class RecipeService : IRecipeservice
     {
-        private readonly DataContext _context;
-        public RecipeService(DataContext context) { 
+     
+        private  IRepository<Recipes> _reciperepository;
 
-            _context= context;
-               
-        }
+       
 
-        public async Task<ActionResult<List<Recipes>>> Add(Recipes recipe)
+        public RecipeService(IRepository<Recipes> Reciperepository)
         {
-            _context.Allrecipes.Add(recipe);
-            await _context.SaveChangesAsync();
-
-            return (await _context.Allrecipes.ToListAsync());
-        }
-
-        public async Task<ActionResult<List<Recipes>>> Delete(int id)
-        {
-            var dbrecipe = await _context.Allrecipes.FindAsync(id);
-            if (dbrecipe is not null)
-            {
-
-                _context.Allrecipes.Remove(dbrecipe);
-                await _context.SaveChangesAsync();
-
-                return (await _context.Allrecipes.ToListAsync());
-            }
-            return (await _context.Allrecipes.ToListAsync());
+            _reciperepository = Reciperepository;
 
         }
 
-
-
-        public async Task<ActionResult<List<Recipes>>> Get()
-        {
-            return (await _context.Allrecipes.ToListAsync());
-        }
-
+         public IEnumerable<Recipes> GetRecipe()
         
-
-        public async Task<ActionResult<IEnumerable<Recipes>>> search(string Name)
         {
-            IQueryable<Recipes> query = _context.Allrecipes;
-            if (!string.IsNullOrEmpty(Name))
-            {
-                query = query.Where(a => a.Name.Contains(Name));
-
-            }
-            return await query.ToListAsync();
-
+            return ( _reciperepository
+                .GetAll(include: "Ingredients")
+                );
         }
 
-        public async Task<ActionResult<List<Recipes>>> Update(Recipes request)
+        public Recipes GetRecipe(int id)
         {
-             var recipe = await _context.Allrecipes.FindAsync(request.Id);
-
-                if (recipe is not null)
-                {
-                    recipe.Name = request.Name;
-                    recipe.Steps = request.Steps;
-                    recipe.Ingredients = request.Ingredients;
-                    recipe.Category = request.Category;
-
-                    return await _context.Allrecipes.ToListAsync();
-
-
-                }
-             return await _context.Allrecipes.ToListAsync();
-
-
-
-
+            return _reciperepository.Get(id);
         }
 
+        public void InsertRecipe(Recipes R)
+        {
+            _reciperepository.Insert(R);
+        }
+      
 
+        public void DeleteRecipe(int id)
+        {
+
+            Recipes R = GetRecipe(id);
+            _reciperepository.Remove(R);
+            _reciperepository.SaveChanges();
+        }
+
+        public void updateR (Recipes request)
+        {
+          _reciperepository.Updatex(request);
+            _reciperepository.SaveChanges();
+        }
+
+      
 
     }
 }
+
+   
